@@ -27,9 +27,9 @@ public class CambiaNombre {
 		System.out.println("INICIO");
 		String opcion = "subcarpetas";
 
-		String origin = "D:\\collection";
-		String destiny = "D:\\collection\\collection\\Nueva carpeta";
-		String filters = "mp4,mpeg,mpg,avi,web,dat,wmv";
+		String origin = "C:\\Users\\Hernan\\Desktop\\CDs\\anime";
+		String destiny = "C:\\Users\\Hernan\\Desktop\\CDs\\anime\\Nueva carpeta";
+		String filters = "mp4,mpeg,mpg,avi,web,dat,wm,mp3,jpg,JPG";
 		List<Archivo> lstArchivos = new ArrayList<Archivo>();
 
 		System.out.println(lstArchivos);
@@ -75,7 +75,10 @@ public class CambiaNombre {
 		File lstFile = new File(origin);
 		File[] arrFile = lstFile.listFiles();
 		DecimalFormat df = new DecimalFormat("#.##");
+		int season = 1;
+		int episode = 1;
 		for (File file : arrFile) {
+
 			if (file.isDirectory() && searchSubDirectory) {
 				lstArchivo.addAll(readFile(file.getPath(), destiny, Boolean.TRUE));
 			} else {
@@ -83,11 +86,12 @@ public class CambiaNombre {
 				archivo.setInitialName(file.getName());
 				archivo.setOriginSource(origin);
 				archivo.setDestinySource(destiny);
-				archivo.setEndName(obtainEndName(file.getName()));
+				archivo.setEndName(obtainEndName(file.getName(), episode, season));
 				archivo.setExtension(obtainExtension(file.getName()));
 				archivo.setLength(df.format((file.length() / 1024000)));
 				lstArchivo.add(archivo);
 			}
+			episode++;
 		}
 		return lstArchivo;
 	}
@@ -113,16 +117,27 @@ public class CambiaNombre {
 	 * @param initialName
 	 * @return
 	 */
-	private String obtainEndName(String initialName) {
+	private String obtainEndName(String initialName, int episode, int season) {
+
 		String endName = "";
 		int pointPosition = initialName.lastIndexOf(POINT_CHART);
 		if (pointPosition > -1) {
-			endName = initialName.substring(0, pointPosition) + "[" + initialName.substring(pointPosition + 1)
+
+//			endName = initialName.substring(0, pointPosition) + "[" + initialName.substring(pointPosition + 1)
+//					+ "].txt";
+			String newName = replaceName(initialName);
+			endName = newName + "[" + season + "X" + episode + "][" + initialName.substring(pointPosition + 1)
 					+ "].txt";
 		} else {
 			endName = initialName + "[no-extension].txt";
 		}
 		return endName;
+	}
+
+	private String replaceName(String initialName) {
+		String newName = "";
+		initialName.replaceAll("[a|A]", "4").replaceAll("e|E", "3").replaceAll("i|I", "1").replaceAll("o|O", "0");
+		return newName;
 	}
 
 	/**
